@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lab Maya Gerak Jatuh Bebas</title>
+<style>
+:root{--bg:#070b1a;--pn:#0f1630;--pn2:#17214a;--ln:#243068;--cy:#22e6ff;--mg:#ff3df2;--yl:#ffd23d;--gr:#3dff9a;--tx:#e8ecff;--mu:#8e9acb;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--tx);font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif}
+*{box-sizing:border-box}
+#st{position:absolute;left:50%;top:50%;width:1280px;height:720px;transform-origin:center;background:radial-gradient(circle at 20% 0,#14214f,var(--bg) 60%);border:1px solid var(--ln);overflow:hidden}
+header{height:60px;display:flex;align-items:center;gap:16px;padding:0 18px;border-bottom:1px solid var(--ln)}
+.logo{font-size:20px;letter-spacing:1px;color:var(--cy);text-shadow:0 0 10px var(--cy);white-space:nowrap}
+.logo small{display:block;font-size:11px;letter-spacing:0;color:var(--mu);text-shadow:none}
+nav{display:flex;gap:6px;flex:1;justify-content:center}
+.b{cursor:pointer;background:var(--pn2);color:var(--tx);border:1px solid var(--cy);border-radius:8px;padding:8px 14px;font:600 14px system-ui,sans-serif}
+.b:hover{box-shadow:0 0 10px var(--cy)}.b:disabled{opacity:.4;cursor:default;box-shadow:none}
+.b.on{background:var(--cy);color:#04121f}.b.sm{padding:5px 9px;font-size:12.5px}.b.mg{border-color:var(--mg)}.b.yl{border-color:var(--yl)}.b.gr{border-color:var(--gr)}
+nav .b{border-color:var(--ln);padding:9px 18px}nav .b.on{border-color:var(--cy)}
+.pn{display:none;position:absolute;inset:60px 0 0 0;padding:14px 18px}
+.pn.on{display:grid;gap:14px}
+#teori.on,#dev.on{grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+#pro.on{grid-template-columns:repeat(3,1fr);grid-template-rows:auto 1fr 1fr auto}
+#sim.on{grid-template-columns:800px 1fr}
+#lkpd.on{grid-template-columns:590px 1fr}
+.card{background:var(--pn);border:1px solid var(--ln);border-radius:12px;padding:12px 16px;font-size:14.5px;line-height:1.5;overflow:hidden}
+.card h3{margin:0 0 6px;font-size:16px;color:var(--cy)}.card p{margin:4px 0}
+.f{font:600 17px ui-monospace,Consolas,monospace;color:var(--yl);line-height:1.7}
+.num{display:inline-flex;width:28px;height:28px;border-radius:50%;background:var(--mg);color:#fff;align-items:center;justify-content:center;font-weight:700;margin-right:8px}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border:1px solid var(--ln);padding:4px 6px;text-align:center}th{background:var(--pn2);color:var(--cy)}
+canvas{display:block;border-radius:10px;border:1px solid var(--ln)}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}.row>span:first-child{width:78px;color:var(--mu)}
+.row input[type=range]{flex:1;accent-color:var(--cy)}.row .seg{display:flex;gap:4px;flex-wrap:wrap}
+.val{width:52px;text-align:right;color:var(--yl);font-weight:700}
+#ms{min-height:44px;font-size:13.5px;color:var(--gr);line-height:1.4}
+.q{display:grid;grid-template-columns:1fr 200px 22px;gap:8px;align-items:center;padding:5px 0;border-bottom:1px dashed var(--ln);font-size:13.5px}
+select,input[type=text],textarea{background:#0a1028;color:var(--tx);border:1px solid var(--ln);border-radius:6px;padding:5px;font:inherit}
+#pr{width:70px}.ok{color:var(--gr)}.no{color:var(--mg)}
+
+#sp{position:absolute;inset:0;z-index:99;background:#070b1a center/cover no-repeat;transition:opacity .7s,transform .7s}
+#sp.out{opacity:0;transform:scale(1.06);pointer-events:none}
+#spc{position:absolute;left:50%;bottom:34px;width:560px;margin-left:-340px;text-align:center;padding:14px 20px 16px;border-radius:16px;background:rgba(7,11,26,.78);border:1px solid var(--cy);box-shadow:0 0 24px rgba(34,230,255,.35);backdrop-filter:blur(4px)}
+#spt{font-size:14px;color:var(--tx);display:flex;justify-content:space-between;margin-bottom:6px}#spp{color:var(--yl);font-weight:700}
+#spk{height:14px;border-radius:8px;background:#0a1028;border:1px solid var(--ln);overflow:hidden}
+#spb{height:100%;width:0;background:linear-gradient(90deg,var(--cy),var(--mg));box-shadow:0 0 12px var(--cy);transition:width .08s linear}
+#spg{display:none;margin-top:12px;font-size:22px;padding:12px 46px;border-radius:30px;border-color:var(--gr);color:var(--gr);letter-spacing:2px;animation:pl 1.2s infinite}
+#sp.rd #spg{display:inline-block}#sp.rd #spk{box-shadow:0 0 14px var(--gr)}
+#spg:hover{background:var(--gr);color:#04121f}
+@keyframes pl{0%,100%{box-shadow:0 0 8px var(--gr)}50%{box-shadow:0 0 26px var(--gr)}}
+#sph{margin-top:8px;font-size:12px;color:var(--mu)}
+</style></head><body>
+<div id="st">
+<div id="sp" style="background-image:url(assets/images/splash.jpg)">
+ <div id="spc"><div id="spt"><span id="spl">Memulai...</span><span id="spp">0%</span></div>
+ <div id="spk"><div id="spb"></div></div>
+ <button class="b" id="spg">▶ MULAI</button>
+ <div id="sph">Gunakan perangkat audio agar efek suara terdengar</div></div>
+</div>
+
+<header>
+ <div class="logo">⬇ FREEFALL LAB<small>Gerak Jatuh Bebas · Fase E (Kelas X)</small></div>
+ <nav id="tabs"></nav>
+ <button class="b" id="snd">🔊 Suara: Aktif</button>
+</header>
+
+<section class="pn" id="teori">
+ <div class="card"><h3>📘 Apa itu Jatuh Bebas?</h3>
+  <p>Gerak jatuh bebas adalah gerak vertikal benda yang <b>dilepas tanpa kecepatan awal</b> (v₀ = 0) dan hanya dipengaruhi gaya gravitasi.</p>
+  <p>Geraknya berupa <b>GLBB dipercepat</b> dengan percepatan tetap <b>a = g</b>. Di Bumi g ≈ 9,8 m/s² (sering dibulatkan 10 m/s²), arahnya ke pusat Bumi.</p>
+  <p>Ciri-ciri: kecepatan bertambah seragam tiap detik, jarak jatuh bertambah makin besar, dan grafik v–t berupa garis lurus yang naik dari titik asal.</p></div>
+ <div class="card"><h3>🧮 Persamaan</h3>
+  <div class="f">v = g · t<br>h = ½ · g · t²<br>v² = 2 · g · h<br>t = √(2h / g)</div>
+  <p>h = jarak jatuh (m), t = waktu (s), v = kecepatan (m/s), g = percepatan gravitasi (m/s²).</p>
+  <p><b>Contoh:</b> h = 20 m, g = 10 m/s² → t = √(2·20/10) = 2 s dan v = 10 · 2 = 20 m/s.</p></div>
+ <div class="card"><h3>🪶 Galileo dan Hambatan Udara</h3>
+  <p>Galileo menyimpulkan bahwa tanpa hambatan udara, <b>semua benda jatuh dengan percepatan sama</b>, tidak bergantung pada massa. Pada tahun 1971 astronot Apollo 15 membuktikannya di Bulan dengan menjatuhkan palu dan bulu.</p>
+  <p>Di udara ada gaya hambat yang melawan gerak (di lab ini F = c·v²). Benda ringan dan lebar seperti bulu cepat mencapai <b>kecepatan terminal</b>, yaitu saat hambatan = berat, sehingga a → 0 dan geraknya menjadi GLB.</p></div>
+ <div class="card"><h3>🪐 Percepatan Gravitasi</h3>
+  <table><tr><th>Tempat</th><th>g (m/s²)</th><th>Waktu jatuh dari 45 m</th></tr>
+  <tr><td>Bumi</td><td>9,8</td><td>3,03 s</td></tr><tr><td>Bulan</td><td>1,62</td><td>7,45 s</td></tr>
+  <tr><td>Mars</td><td>3,71</td><td>4,93 s</td></tr><tr><td>Jupiter</td><td>24,8</td><td>1,90 s</td></tr></table>
+  <p>Pola jarak: pada t = 1, 2, 3 s, jarak total berbanding <b>1 : 4 : 9</b>; jarak tiap selang 1 detik berbanding <b>1 : 3 : 5</b>.</p></div>
+</section>
+
+<section class="pn" id="pro">
+ <div class="card" style="grid-column:1/-1"><h3>🎯 Tujuan</h3>Menyelidiki hubungan tinggi, waktu, dan kecepatan pada jatuh bebas; membuktikan bahwa massa tidak memengaruhi percepatan di ruang vakum; serta mengamati pengaruh hambatan udara dan gravitasi planet.</div>
+ <div class="card"><h3><span class="num">1</span>Atur tinggi dan massa</h3>Buka tab Simulasi. Geser slider tinggi (h) dan massa bola. Bulu memiliki massa tetap 5 gram.</div>
+ <div class="card"><h3><span class="num">2</span>Pilih planet dan medium</h3>Mulailah dengan Bumi dan medium Vakum. Catat nilai g yang dipakai.</div>
+ <div class="card"><h3><span class="num">3</span>Buat prediksi</h3>Hitung waktu jatuh bola dengan t = √(2h/g), lalu tulis pada kolom prediksi sebelum menjatuhkan benda.</div>
+ <div class="card"><h3><span class="num">4</span>Jatuhkan dan amati</h3>Tekan Jatuhkan. Amati bola dan bulu, serta jarak antar-bayangan strobo (tiap 0,5 s) dan grafik v–t.</div>
+ <div class="card"><h3><span class="num">5</span>Ulangi dengan variasi</h3>Ganti tinggi, planet, lalu medium menjadi Udara. Setiap percobaan tercatat otomatis di tabel data LKPD.</div>
+ <div class="card"><h3><span class="num">6</span>Analisis di LKPD</h3>Buka tab LKPD, periksa kolom 2h/t² (nilainya mendekati g), jawab soal, lalu tekan Periksa Jawaban.</div>
+ <div style="grid-column:1/-1;text-align:center"><button class="b yl" data-go="sim">▶ Mulai Simulasi</button></div>
+</section>
+
+<section class="pn" id="sim">
+ <div>
+  <canvas id="cv" width="800" height="500"></canvas>
+  <div style="display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap">
+   <button class="b gr" id="go">⬇ Jatuhkan</button><button class="b yl" id="pa">⏸ Jeda</button><button class="b mg" id="rs">⟲ Reset</button>
+   <span style="margin-left:10px;font-size:13px;color:var(--mu)">Prediksi t bola (s):</span><input type="text" id="pr" placeholder="mis. 3,0">
+   <button class="b sm" id="stb">Strobo: Aktif</button>
+  </div>
+  <div id="ms" style="margin-top:6px"></div>
+ </div>
+ <div style="display:flex;flex-direction:column;gap:10px">
+  <div class="card" style="padding:8px 14px"><h3 style="margin:0">⚙ Pengaturan</h3>
+   <div class="row"><span>Tinggi h</span><input type="range" id="sh" min="5" max="100" value="45"><span class="val" id="vh">45 m</span></div>
+   <div class="row"><span>Massa bola</span><input type="range" id="sm" min="1" max="10" value="5"><span class="val" id="vm">5 kg</span></div>
+   <div class="row"><span>Planet (g)</span><div class="seg" id="sg"></div></div>
+   <div class="row"><span>Medium</span><div class="seg" id="sa"></div></div>
+   <div class="row"><span>Kecepatan</span><div class="seg" id="ss"></div></div>
+  </div>
+  <div class="card" style="padding:8px 14px"><h3 style="margin:0 0 4px">📊 Data Langsung · t = <span id="tt" style="color:var(--yl)">0,00</span> s</h3>
+   <table><tr><th></th><th>Bola</th><th>Bulu</th></tr>
+   <tr><td>Jarak jatuh y (m)</td><td id="y0"></td><td id="y1"></td></tr>
+   <tr><td>Kecepatan v (m/s)</td><td id="v0"></td><td id="v1"></td></tr>
+   <tr><td>Percepatan a (m/s²)</td><td id="a0"></td><td id="a1"></td></tr>
+   <tr><td>Waktu tiba (s)</td><td id="t0"></td><td id="t1"></td></tr></table></div>
+  <div class="card" style="padding:8px 14px"><h3 style="margin:0 0 4px">📈 Grafik v–t <small style="color:var(--mu);font-weight:400">(<span style="color:var(--cy)">■</span> bola <span style="color:var(--mg)">■</span> bulu)</small></h3>
+   <canvas id="gv" width="400" height="120" style="width:100%"></canvas></div>
+ </div>
+</section>
+
+<section class="pn" id="lkpd">
+ <div style="display:flex;flex-direction:column;gap:12px">
+  <div class="card"><h3>🗂 Data Percobaan (otomatis dari simulasi)</h3>
+   <table><tr><th>No</th><th>Medium</th><th>h (m)</th><th>g</th><th>t bola (s)</th><th>t bulu (s)</th><th>2h/t² (m/s²)</th></tr><tbody id="tb"></tbody></table>
+   <p style="color:var(--mu);font-size:12.5px">Bandingkan kolom 2h/t² dengan g. Mengapa nilainya sama di vakum tetapi berbeda di udara?</p></div>
+  <div class="card" style="flex:1"><h3>✍ Kesimpulan</h3><textarea id="ks" rows="5" style="width:100%;resize:none" placeholder="Tuliskan kesimpulan dari percobaanmu..."></textarea></div>
+ </div>
+ <div class="card"><h3>📝 Lembar Kerja Peserta Didik</h3><div id="qs"></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
+   <button class="b gr" id="ck">✔ Periksa Jawaban</button><button class="b mg" id="rl">⟲ Reset LKPD</button>
+   <b id="sc" style="margin-left:auto;font-size:16px;color:var(--yl)"></b></div></div>
+</section>
+
+<section class="pn" id="dev">
+ <div class="card"><h3>👩‍💻 Pengembang</h3><p><b>Nama:</b> Lisa Fitriyah</p><p><b>Peran:</b> Pengembang media pembelajaran interaktif</p><p><b>Produk:</b> Lab Maya Gerak Jatuh Bebas, versi 1.0</p><p><b>Sasaran:</b> Fisika SMA Fase E (Kelas X), Kurikulum Merdeka, materi gerak lurus (kinematika).</p></div>
+ <div class="card"><h3>🛠 Teknologi</h3><p>HTML5 Canvas untuk animasi dan JavaScript murni, tanpa pustaka eksternal. Struktur: index.html + assets/images + assets/sound (berkas WAV). Semua jalur relatif sehingga dapat berjalan offline selama folder tetap utuh.</p><p>Tata letak dikunci 16:9 dan otomatis menyesuaikan ukuran layar tanpa scrolling.</p></div>
+ <div class="card"><h3>⚛ Model Fisika</h3><p>Integrasi numerik semi-implisit Euler (Δt ≤ 4 ms). Percepatan: a = g − (c/m)·v². Vakum: c = 0.</p><table><tr><th>Benda</th><th>m</th><th>c</th><th>v terminal (Bumi)</th></tr><tr><td>Bola</td><td>1–10 kg</td><td>0,01</td><td>31–99 m/s</td></tr><tr><td>Bulu</td><td>0,005 kg</td><td>0,004</td><td>3,5 m/s</td></tr></table></div>
+ <div class="card"><h3>💡 Ide Pengembangan</h3><p>Tambahkan benda dengan bentuk lain, kecepatan awal (gerak vertikal ke atas), atau ekspor data ke spreadsheet. Nama pengembang dan versi dapat diubah langsung pada berkas ini.</p></div>
+</section>
+</div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const F=x=>x.toFixed(2).replace('.',','),Gs=x=>String(x).replace('.',',');
+function fit(){$('#st').style.transform='translate(-50%,-50%) scale('+Math.min(innerWidth/1280,innerHeight/720)+')'}
+addEventListener('resize',fit);fit();
+
+/* ---------- Suara (berkas WAV lokal: assets/sound/) ---------- */
+const SD='assets/sound/',SFX={};let snd=true,unlocked=false,wh=null;
+function ac(){unlocked=true}
+function sfx(n,v){if(!snd||!unlocked)return;try{const a=(SFX[n]||(SFX[n]=new Audio(SD+n+'.wav'))).cloneNode();a.volume=v||.6;a.play().catch(()=>{})}catch(e){}}
+function chime(){sfx('chime',.7)}
+function thud(){sfx('thud',.8)}
+function wooshStart(){if(!snd||!unlocked||wh)return;try{wh=new Audio(SD+'whoosh.wav');wh.loop=true;wh.volume=0;wh.preservesPitch=false;wh.play().catch(()=>{})}catch(e){wh=null}}
+function wooshSet(v){if(wh){wh.volume=Math.min(.45,v/150);wh.playbackRate=Math.min(2.5,.7+v/50)}}
+function wooshStop(){if(wh){try{wh.pause()}catch(e){}wh=null}}
+document.addEventListener('click',e=>{if(e.target.closest('button'))sfx('click',.4)});
+$('#snd').onclick=()=>{snd=!snd;if(!snd)wooshStop();$('#snd').textContent=snd?'🔊 Suara: Aktif':'🔇 Suara: Mati'};
+
+/* ---------- Tab ---------- */
+const TB=[['teori','📘 Teori'],['pro','📋 Prosedur'],['sim','🔬 Simulasi'],['lkpd','📝 LKPD'],['dev','👩‍💻 Pengembang']];
+TB.forEach(([id,l])=>{const b=document.createElement('button');b.className='b';b.textContent=l;b.dataset.t=id;b.onclick=()=>show(id);$('#tabs').appendChild(b)});
+function show(id){$$('.pn').forEach(p=>p.classList.toggle('on',p.id===id));$$('#tabs .b').forEach(b=>b.classList.toggle('on',b.dataset.t===id));if(id==='lkpd')rowsR();if(id!=='sim'&&running&&!paused)pause()}
+$$('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));
+
+/* ---------- Simulasi ---------- */
+const DEF={h:45,m:5,g:9.8,air:false,sp:1,st:true};
+let P={...DEF},objs=[],tt=0,last=0,running=false,paused=false,hist=[],nextS=.5,nextP=.05,rows=[];
+const cv=$('#cv'),cx=cv.getContext('2d'),gv=$('#gv'),gx=gv.getContext('2d'),Y0=40,Y1=430;
+const Yp=y=>Y0+y*(Y1-Y0)/P.h,rr=o=>o.n==='Bola'?10+o.m*1.2:7;
+function mk(){objs=[{n:'Bola',x:300,m:P.m,c:.01},{n:'Bulu',x:500,m:.005,c:.004}].map(o=>({...o,y:0,v:0,a:P.g,t:null,vf:0,done:false,pts:[[0,0]]}));tt=0;hist=[{t:0,y:[0,0]}];nextS=.5;nextP=.05}
+function msg(t){$('#ms').innerHTML=t}
+function setBtns(){$('#go').disabled=running;$('#pa').disabled=!running;$('#pa').textContent=paused?'▶ Lanjut':'⏸ Jeda'}
+function resetSim(){running=false;paused=false;wooshStop();mk();msg('Atur parameter, tulis prediksimu, lalu tekan <b>Jatuhkan</b>.');setBtns()}
+function start(){if(running)return;ac();mk();running=true;paused=false;last=performance.now();wooshStart();sfx('release',.6);msg('Benda dilepas...');setBtns()}
+function pause(){if(!running)return;paused=!paused;if(paused)wooshStop();else{last=performance.now();wooshStart()}setBtns()}
+function step(d,pend){tt+=d;objs.forEach(o=>{if(o.done)return;o.a=P.g-(P.air?o.c/o.m*o.v*o.v:0);o.v+=o.a*d;o.y+=o.v*d;if(o.y>=P.h){o.t=tt-(o.y-P.h)/o.v;o.y=P.h;o.vf=o.v;o.done=true;o.pts.push([o.t,o.vf]);pend.push(o)}});
+ if(tt>=nextP){objs.forEach(o=>{if(!o.done)o.pts.push([tt,o.v])});nextP+=.05}
+ if(tt>=nextS){if(objs.some(o=>!o.done))hist.push({t:nextS,y:objs.map(o=>o.y)});nextS+=.5}}
+function finish(){running=false;wooshStop();const b=objs[0],f=objs[1];rows.push({m:P.air?'Udara':'Vakum',h:P.h,g:P.g,tb:b.t,tf:f.t});if(rows.length>8)rows.shift();
+ let s='Bola tiba <b>'+F(b.t)+' s</b> (v = '+F(b.vf)+' m/s), bulu tiba <b>'+F(f.t)+' s</b>. '+(Math.abs(b.t-f.t)<.02?'Keduanya tiba bersamaan! ':'Bulu lebih lambat karena hambatan udara. ');
+ const p=parseFloat($('#pr').value.replace(',','.'));if(!isNaN(p)){const e=Math.abs(p-b.t);s+='Prediksimu '+F(p)+' s, selisih '+F(e)+' s. '+(e<=.25?'🎯 Prediksi tepat!':'Gunakan t = √(2h/g).');if(e<=.25)chime()}
+ msg(s);setBtns()}
+function frame(ts){
+ if(running&&!paused){const dt=Math.max(0,Math.min((ts-last)/1000,.05))*P.sp;last=ts;const n=Math.max(1,Math.ceil(dt/.004)),pend=[];for(let i=0;i<n;i++)step(dt/n,pend);
+  pend.forEach(thud);wooshSet(Math.max(0,...objs.filter(o=>!o.done).map(o=>o.v)));if(objs.every(o=>o.done))finish()}
+ if($('#sim').classList.contains('on')){readout();draw();graph()}
+ requestAnimationFrame(frame)}
+function readout(){$('#tt').textContent=F(tt);objs.forEach((o,i)=>{$('#y'+i).textContent=F(o.y);$('#v'+i).textContent=F(o.done?o.vf:o.v);$('#a'+i).textContent=F(o.a);$('#t'+i).textContent=o.done?F(o.t):'—'})}
+function draw(){
+ const g=cx.createLinearGradient(0,0,0,500);g.addColorStop(0,'#0b1330');g.addColorStop(1,'#13204a');cx.fillStyle=g;cx.fillRect(0,0,800,500);
+ cx.fillStyle='#1c2a5e';cx.fillRect(0,452,800,48);cx.fillStyle='#22e6ff';cx.fillRect(0,452,800,2);
+ const stp=P.h<=20?2:P.h<=50?5:10;cx.font='12px system-ui';cx.textAlign='right';
+ for(let hh=0;hh<=P.h;hh+=stp){const y=Yp(P.h-hh);cx.strokeStyle='rgba(120,140,220,.15)';cx.beginPath();cx.moveTo(80,y);cx.lineTo(790,y);cx.stroke();cx.fillStyle='#8e9acb';cx.fillText(hh+' m',72,y+4);cx.fillRect(76,y,8,1)}
+ if(P.h%stp){cx.fillStyle='#ffd23d';cx.fillText(P.h+' m',72,Y0+4)}
+ cx.fillStyle='#2b3a7a';cx.fillRect(180,28,440,10);cx.textAlign='center';cx.fillStyle='#e8ecff';cx.font='13px system-ui';
+ objs.forEach(o=>cx.fillText(o.n==='Bola'?'Bola besi ('+P.m+' kg)':'Bulu (5 g)',o.x,20));
+ cx.textAlign='right';cx.fillStyle=P.air?'#ffd23d':'#3dff9a';cx.fillText(P.air?'🌬 Ada udara':'⬛ Vakum',790,20);
+ if(P.st)hist.forEach(h=>{objs.forEach((o,i)=>{cx.globalAlpha=.28;cx.fillStyle=i?'#ff3df2':'#22e6ff';cx.beginPath();cx.arc(o.x,Yp(h.y[i]),rr(o)*.8,0,7);cx.fill()});cx.globalAlpha=1;cx.fillStyle='#8e9acb';cx.font='11px system-ui';cx.textAlign='right';cx.fillText(F(h.t)+' s',objs[0].x-rr(objs[0])-8,Yp(h.y[0])+4)});
+ objs.forEach((o,i)=>{const y=Yp(o.y),r=rr(o);
+  if(P.air&&!o.done&&o.v>2){cx.strokeStyle='rgba(255,255,255,.25)';for(let k=-1;k<2;k++){cx.beginPath();cx.moveTo(o.x+k*7,y-r-4);cx.lineTo(o.x+k*7,y-r-4-Math.min(40,o.v*1.5));cx.stroke()}}
+  if(i===0){const gr=cx.createRadialGradient(o.x-r/3,y-r/3,2,o.x,y,r);gr.addColorStop(0,'#bff6ff');gr.addColorStop(1,'#0d8fa8');cx.fillStyle=gr;cx.shadowColor='#22e6ff';cx.shadowBlur=14;cx.beginPath();cx.arc(o.x,y,r,0,7);cx.fill()}
+  else{const sw=P.air&&!o.done?Math.sin(tt*6):0;cx.save();cx.translate(o.x+sw*10,y);cx.rotate(sw*.4);cx.shadowColor='#ff3df2';cx.shadowBlur=12;cx.fillStyle='#ff3df2';cx.beginPath();cx.ellipse(0,0,15,5,0,0,7);cx.fill();cx.strokeStyle='#ffd0fb';cx.beginPath();cx.moveTo(-15,0);cx.lineTo(15,0);cx.stroke();cx.restore()}
+  cx.shadowBlur=0})}
+function graph(){const W=400,H=120;gx.fillStyle='#0a1028';gx.fillRect(0,0,W,H);const T=Math.max(tt,2);let V=5;objs.forEach(o=>o.pts.forEach(p=>V=Math.max(V,p[1])));
+ const X=t=>34+t/T*(W-44),Y=v=>H-16-v/V*(H-28);gx.strokeStyle='#8e9acb';gx.beginPath();gx.moveTo(34,8);gx.lineTo(34,H-16);gx.lineTo(W-8,H-16);gx.stroke();
+ gx.fillStyle='#8e9acb';gx.font='10px system-ui';gx.textAlign='right';gx.fillText(Math.round(V),31,16);gx.fillText('0',31,H-18);gx.textAlign='center';gx.fillText(T.toFixed(1)+' s',W-24,H-3);
+ ['#22e6ff','#ff3df2'].forEach((c,i)=>{gx.strokeStyle=c;gx.lineWidth=2;gx.beginPath();objs[i].pts.forEach((p,k)=>k?gx.lineTo(X(p[0]),Y(p[1])):gx.moveTo(X(p[0]),Y(p[1])));gx.stroke()});gx.lineWidth=1}
+function seg(id,items,cur,fn){const el=$('#'+id);el.innerHTML='';items.forEach(([l,v])=>{const b=document.createElement('button');b.className='b sm'+(v===cur?' on':'');b.textContent=l;b.onclick=()=>{[...el.children].forEach(c=>c.classList.remove('on'));b.classList.add('on');fn(v)};el.appendChild(b)})}
+function ui(){$('#sh').value=P.h;$('#vh').textContent=P.h+' m';$('#sm').value=P.m;$('#vm').textContent=P.m+' kg';
+ seg('sg',[['Bumi 9,8',9.8],['Bulan 1,62',1.62],['Mars 3,71',3.71],['Jupiter 24,8',24.8]],P.g,v=>{P.g=v;resetSim()});
+ seg('sa',[['Vakum',false],['Udara',true]],P.air,v=>{P.air=v;resetSim()});
+ seg('ss',[['0,25×',.25],['1×',1],['3×',3]],P.sp,v=>{P.sp=v});
+ $('#stb').textContent='Strobo: '+(P.st?'Aktif':'Mati')}
+$('#sh').oninput=e=>{P.h=+e.target.value;$('#vh').textContent=P.h+' m';resetSim()};
+$('#sm').oninput=e=>{P.m=+e.target.value;$('#vm').textContent=P.m+' kg';resetSim()};
+$('#stb').onclick=()=>{P.st=!P.st;$('#stb').textContent='Strobo: '+(P.st?'Aktif':'Mati')};
+$('#go').onclick=start;$('#pa').onclick=pause;
+$('#rs').onclick=()=>{P={...DEF};$('#pr').value='';ui();resetSim()};
+
+/* ---------- LKPD ---------- */
+const Q=[
+{q:'Di vakum, bola besi dan bulu dijatuhkan bersamaan dari ketinggian sama. Yang tiba lebih dulu…',o:['Bola besi','Bulu','Keduanya bersamaan'],a:2},
+{q:'Grafik v–t pada gerak jatuh bebas berbentuk…',o:['Garis lurus miring dari titik asal','Garis horizontal','Parabola membuka ke atas'],a:0},
+{q:'Jarak jatuh total pada t = 1 s, 2 s, 3 s berbanding…',o:['1 : 2 : 3','1 : 4 : 9','1 : 3 : 5'],a:1},
+{q:'Di udara, bulu jatuh lebih lambat karena…',o:['Massa bulu nol','Gaya hambat udara besar dibanding beratnya','g di udara lebih kecil'],a:1},
+{q:'Benda jatuh dari h = 80 m (g = 10 m/s²). Waktu jatuhnya (s)?',n:4},
+{q:'Kecepatan benda tadi saat tiba di tanah (m/s)?',n:40}];
+function lk(){$('#qs').innerHTML=Q.map((q,i)=>'<div class="q"><span>'+(i+1)+'. '+q.q+'</span>'+(q.o?'<select id="q'+i+'"><option value="">— pilih —</option>'+q.o.map((o,j)=>'<option value="'+j+'">'+o+'</option>').join('')+'</select>':'<input type="text" id="q'+i+'" size="8" placeholder="angka">')+'<b id="m'+i+'"></b></div>').join('')}
+function rowsR(){$('#tb').innerHTML=rows.length?rows.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+r.m+'</td><td>'+r.h+'</td><td>'+Gs(r.g)+'</td><td>'+F(r.tb)+'</td><td>'+F(r.tf)+'</td><td>'+F(2*r.h/r.tb**2)+'</td></tr>').join(''):'<tr><td colspan="7">Belum ada data. Jalankan simulasi terlebih dahulu.</td></tr>'}
+$('#ck').onclick=()=>{let s=0;Q.forEach((q,i)=>{const e=$('#q'+i),m=$('#m'+i);let ok=false;if(e.value==='')m.textContent='–';else{ok=q.o?+e.value===q.a:Math.abs(parseFloat(e.value.replace(',','.'))-q.n)<=.01*q.n+.01;m.textContent=ok?'✓':'✗'}m.className=ok?'ok':'no';s+=ok});
+ const sk=Math.round(s/Q.length*100);$('#sc').textContent='Skor: '+sk+' ('+s+'/'+Q.length+' benar)';if(sk===100)chime();else sfx('wrong',.5)};
+$('#rl').onclick=()=>{lk();$('#sc').textContent='';$('#ks').value='';rows=[];rowsR()};
+
+/* ---------- Mulai ---------- */
+lk();ui();resetSim();show('teori');requestAnimationFrame(frame);
+
+/* ---------- Splash ---------- */
+(function(){
+ const sp=$('#sp'),bar=$('#spb'),pc=$('#spp'),lb=$('#spl'),go=$('#spg');
+ const ok=()=>snd&&unlocked;
+ ['pointerdown','keydown'].forEach(e=>addEventListener(e,()=>ac(),{once:true}));
+ const S=[[1,'Memulai...'],[15,'Memuat modul teori...'],[35,'Menyiapkan simulasi...'],[60,'Menyusun LKPD...'],[85,'Menyiapkan efek suara...'],[100,'Siap!']];
+ let p=0,k=0,ready=false,pt=0;
+ const iv=setInterval(()=>{
+  p=Math.min(100,p+1.2+Math.random()*1.2);
+  while(k<S.length&&p>=S[k][0]){lb.textContent=S[k][1];k++}
+  bar.style.width=p+'%';pc.textContent=Math.floor(p)+'%';
+  if(Math.floor(p/10)>pt){pt=Math.floor(p/10);sfx('tick',.4)}
+  if(p>=100){clearInterval(iv);ready=true;sp.classList.add('rd');lb.textContent='Siap! Tekan tombol Mulai';sfx('ding',.7)}
+ },50);
+ function begin(){if(!ready)return;ready=false;ac();
+  sfx('start',.8);
+  sp.classList.add('out');setTimeout(()=>sp.remove(),800)}
+ go.onclick=begin;go.onmouseenter=()=>{if(ready)sfx('hover',.4)};
+ addEventListener('keydown',e=>{if(ready&&(e.key==='Enter'||e.key===' ')){e.preventDefault();begin()}});
+})();
+</script></body></html>
